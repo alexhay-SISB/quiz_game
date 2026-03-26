@@ -442,7 +442,7 @@
 
         <div class="rule-item">
           <div class="rule-emoji">❌</div>
-          <div class="rule-text"><strong>Incorrect Answer</strong><br>No points are awarded or deducted. The question is discarded.</div>
+          <div class="rule-text"><strong>Incorrect Answer</strong><br>The student's team <span class="minus">loses the points</span> for that question.</div>
         </div>
 
         <div class="rule-item">
@@ -451,8 +451,13 @@
         </div>
 
         <div class="rule-item">
+          <div class="rule-emoji">✅➡️🧑‍🤝‍🧑</div>
+          <div class="rule-text"><strong>Pass → Correct (same team)</strong><br>Teamwork! <span class="plus">Both students' team gains the points</span> — passing to a teammate pays off!</div>
+        </div>
+
+        <div class="rule-item">
           <div class="rule-emoji">✅➡️</div>
-          <div class="rule-text"><strong>Pass → Correct</strong><br>The new student's team <span class="plus">gains the points</span>. The team that passed <span class="minus">loses the same points</span>.</div>
+          <div class="rule-text"><strong>Pass → Correct (different team)</strong><br>The new student's team <span class="plus">gains the points</span>. The team that passed <span class="minus">loses the same points</span>.</div>
         </div>
 
         <div class="rule-item">
@@ -1121,14 +1126,23 @@ function resolveQuestion(correct) {
       playSound('correct');
       afterResolve();
     } else {
+      scores[currentStudent.group] -= currentQuestion.pts;
       showWrongOverlay(afterResolve);
     }
   } else {
     const sameGroup = passRecipient && passRecipient.group === passOriginalStudent.group;
     if (correct) {
-      scores[passRecipient.group] += currentQuestion.pts;
-      scores[passOriginalStudent.group] -= currentQuestion.pts;
-      showCelebration(`🎉 ${passRecipient.name} CORRECT! +${currentQuestion.pts}\n${passOriginalStudent.name} -${currentQuestion.pts}`);
+      if (sameGroup) {
+        // Same team — both get points
+        scores[passRecipient.group] += currentQuestion.pts;
+        scores[passOriginalStudent.group] += currentQuestion.pts;
+        showCelebration(`🎉 Teamwork! Both ${passOriginalStudent.name} & ${passRecipient.name}\n+${currentQuestion.pts} pts each!`);
+      } else {
+        // Different team — recipient gets points, passer loses points
+        scores[passRecipient.group] += currentQuestion.pts;
+        scores[passOriginalStudent.group] -= currentQuestion.pts;
+        showCelebration(`🎉 ${passRecipient.name} CORRECT! +${currentQuestion.pts}\n${passOriginalStudent.name} -${currentQuestion.pts}`);
+      }
       launchConfetti();
       playSound('correct');
       afterResolve();
