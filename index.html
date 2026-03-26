@@ -609,60 +609,37 @@ const WRONG_GIFS = [
   'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXo1YnB2bGtqMjVteTlhMzl1ZDRsa3BmYXpoOTcya3R0cmlmd2VnbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/iNLyKccqVmiBy/giphy.gif'
 ];
 
+// Sound filenames — these live in the /sounds/ folder in your repo
 const WRONG_SOUNDS = [
-  'https://www.myinstants.com/media/sounds/challenge-lose.mp3',
-  'https://www.myinstants.com/media/sounds/you-lose.mp3',
-  'https://www.myinstants.com/media/sounds/spongebob-loser-call-34114.mp3',
-  'https://www.myinstants.com/media/sounds/marios-lose-a-life-song.mp3',
-  'https://www.myinstants.com/media/sounds/loser-horn.mp3',
-  'https://www.myinstants.com/media/sounds/ha-ha-loser-83610.mp3',
-  'https://www.myinstants.com/media/sounds/ace-ventura-loser-95280.mp3',
-  'https://www.myinstants.com/media/sounds/hank-youre-a-loser.mp3',
-  'https://www.myinstants.com/media/sounds/mario-world-life-lost-15181.mp3',
-  'https://www.myinstants.com/media/sounds/loser-wind-89178.mp3',
-  'https://www.myinstants.com/media/sounds/you-lose-you-lose-60598.mp3',
-  'https://www.myinstants.com/media/sounds/harley-quinn-loser-75641.mp3',
-  'https://www.myinstants.com/media/sounds/loser-drops-out-84090.mp3',
-  'https://www.myinstants.com/media/sounds/lose-sound-95756.mp3',
-  'https://www.myinstants.com/media/sounds/you-lose-zelda-55152.mp3',
-  'https://www.myinstants.com/media/sounds/loser-tune-sound-72851.mp3',
-  'https://www.myinstants.com/media/sounds/wrong.mp3',
-  'https://www.myinstants.com/media/sounds/donald-trump-wrong-42407.mp3',
-  'https://www.myinstants.com/media/sounds/family-fortunes-wrong-buzzer.mp3',
-  'https://www.myinstants.com/media/sounds/qi-klaxon-41125.mp3',
-  'https://www.myinstants.com/media/sounds/wrong-thats-wrong.mp3',
-  'https://www.myinstants.com/media/sounds/wrong-again-27809.mp3',
-  'https://www.myinstants.com/media/sounds/clearly-wrong-20238.mp3'
+  'sounds/070-challenge-lose.mp3',
+  'sounds/ace-ventura-loser.mp3',
+  'sounds/donald-trump-wrong-sound-effect.mp3',
+  'sounds/dr-cox-wrong-wrong-wrong-wrong.mp3',
+  'sounds/engineer_no01.mp3',
+  'sounds/family-fortunes-wrong-buzzer.mp3',
+  'sounds/lose1.mp3',
+  'sounds/loser_Mq7QJFN.mp3',
+  'sounds/loser-horn.mp3',
+  'sounds/m_43jcNnM.mp3',
+  'sounds/nooo_swf.mp3',
+  'sounds/priceisrightfail_1_1.mp3',
+  'sounds/ringtone_7.mp3',
+  'sounds/super-mario-bros_1.mp3',
+  'sounds/the-simpsons-nelsons-haha_Hr8OgOG.mp3',
+  'sounds/wrong-answer-buzzer.mp3',
+  'sounds/you-lose.mp3'
 ];
 
 let wrongAudio = null;
 let pendingWrongCallback = null;
 
-async function playWrongSound(url) {
+function playWrongSound(path) {
   try {
-    const ac = getAudio();
-    // Fetch via CORS proxy to bypass myinstants CORS restriction
-    const proxy = 'https://corsproxy.io/?' + encodeURIComponent(url);
-    const resp = await fetch(proxy);
-    if (!resp.ok) throw new Error('fetch failed');
-    const arrayBuffer = await resp.arrayBuffer();
-    const audioBuffer = await ac.decodeAudioData(arrayBuffer);
-    const source = ac.createBufferSource();
-    const gainNode = ac.createGain();
-    gainNode.gain.value = 0.85;
-    source.buffer = audioBuffer;
-    source.connect(gainNode);
-    gainNode.connect(ac.destination);
-    source.start(0);
-    wrongAudio = source;
-  } catch(e) {
-    // Fallback: try direct Audio element (works if CORS eventually allows it)
-    try {
-      wrongAudio = new Audio(url);
-      wrongAudio.volume = 0.85;
-      wrongAudio.play().catch(() => {});
-    } catch(e2) {}
-  }
+    if (wrongAudio) { wrongAudio.pause(); wrongAudio.currentTime = 0; }
+    wrongAudio = new Audio(path);
+    wrongAudio.volume = 0.85;
+    wrongAudio.play().catch(() => {});
+  } catch(e) {}
 }
 
 function showWrongOverlay(onDismiss) {
