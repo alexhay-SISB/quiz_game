@@ -147,20 +147,20 @@
   @keyframes slideDown { from{transform:translateY(-20px);opacity:0} to{transform:translateY(0);opacity:1} }
 
   /* ---- QUESTION MODAL ---- */
-  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:500; display:none; align-items:center; justify-content:center; padding:20px; }
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:500; display:none; align-items:flex-start; justify-content:center; padding:20px; overflow-y:auto; }
   .modal-overlay.show { display:flex; animation:fadeIn 0.3s; }
-  .q-modal { background:linear-gradient(135deg,#12122a,#0d0d2e); border:2px solid rgba(255,230,109,0.3); border-radius:28px; padding:40px; max-width:800px; width:100%; text-align:center; position:relative; box-shadow:0 0 80px rgba(78,205,196,0.2); animation:modalPop 0.4s cubic-bezier(0.34,1.56,0.64,1); }
-  .q-player-tag { font-size:16px; color:rgba(255,255,255,0.5); font-weight:700; text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
-  .q-player-name { font-family:'Bangers',cursive; font-size:36px; letter-spacing:2px; margin-bottom:20px; }
-  .q-points-badge { display:inline-block; background:rgba(255,230,109,0.15); border:2px solid rgba(255,230,109,0.4); color:var(--accent); padding:8px 24px; border-radius:50px; font-family:'Bangers',cursive; font-size:24px; letter-spacing:2px; margin-bottom:24px; }
-  .q-text { font-size:clamp(20px,3vw,30px); font-weight:800; line-height:1.4; margin-bottom:30px; color:white; }
+  .q-modal { background:linear-gradient(135deg,#12122a,#0d0d2e); border:2px solid rgba(255,230,109,0.3); border-radius:28px; padding:24px 32px; max-width:800px; width:100%; text-align:center; position:relative; box-shadow:0 0 80px rgba(78,205,196,0.2); animation:modalPop 0.4s cubic-bezier(0.34,1.56,0.64,1); margin:auto; }
+  .q-player-tag { font-size:14px; color:rgba(255,255,255,0.5); font-weight:700; text-transform:uppercase; letter-spacing:2px; margin-bottom:4px; }
+  .q-player-name { font-family:'Bangers',cursive; font-size:36px; letter-spacing:2px; margin-bottom:10px; }
+  .q-points-badge { display:inline-block; background:rgba(255,230,109,0.15); border:2px solid rgba(255,230,109,0.4); color:var(--accent); padding:6px 20px; border-radius:50px; font-family:'Bangers',cursive; font-size:22px; letter-spacing:2px; margin-bottom:14px; }
+  .q-text { font-size:clamp(18px,2.5vw,26px); font-weight:800; line-height:1.4; margin-bottom:16px; color:white; }
   .q-answer-reveal { background:rgba(78,205,196,0.1); border:2px solid rgba(78,205,196,0.3); border-radius:16px; padding:16px 24px; margin-bottom:24px; display:none; }
   .q-answer-reveal.show { display:block; animation:fadeIn 0.3s; }
   .q-answer-label { font-size:12px; color:rgba(78,205,196,0.7); text-transform:uppercase; letter-spacing:2px; font-weight:700; }
   .q-answer-text { font-size:22px; font-weight:800; color:#4ECDC4; margin-top:6px; }
 
   /* Timer */
-  .q-timer-ring { display:flex; align-items:center; justify-content:center; margin-bottom:16px; }
+  .q-timer-ring { display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
   .q-timer-svg { display:block; }
   .timer-bg { fill:none; stroke:rgba(255,255,255,0.1); stroke-width:8; }
   .timer-fg { fill:none; stroke:var(--accent); stroke-width:8; stroke-linecap:round; transition:stroke-dashoffset 1s linear, stroke 0.5s; }
