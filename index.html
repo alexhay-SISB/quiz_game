@@ -533,7 +533,7 @@
           <text class="timer-text" id="timerText" x="55" y="55">30</text>
         </svg>
       </div>
-      <div class="q-result-row show" id="qResultRow">
+      <div class="q-result-row" id="qResultRow">
         <button class="q-btn btn-reveal" onclick="revealAnswer()">👁 Reveal Answer</button>
         <button class="q-btn btn-correct" onclick="resolveQuestion(true)">✅ Correct!</button>
         <button class="q-btn btn-incorrect" onclick="resolveQuestion(false)">❌ Incorrect</button>
@@ -1046,21 +1046,33 @@ function openQuestion() {
   const idx = availableIdx[Math.floor(Math.random()*availableIdx.length)];
   currentQuestion = { ...gameData.questions[idx], idx };
 
-  // Reset modal to Phase 1
+  // Full reset of modal to Phase 1 — clear everything from previous question
   document.getElementById('qPlayerName').textContent = currentStudent.name;
   const g = groups.find(g=>g.name===currentStudent.group);
   document.getElementById('qPlayerName').style.color = g ? g.color : 'white';
   document.getElementById('qPointsBadge').textContent = `⭐ ${currentQuestion.pts} Points`;
   document.getElementById('qText').textContent = currentQuestion.q;
+  // Hide answer reveal
   document.getElementById('qAnswerReveal').classList.remove('show');
   document.getElementById('qAnswerText').textContent = currentQuestion.a;
+  // Hide pass box
   document.getElementById('passBox').classList.remove('show');
+  document.getElementById('passName').textContent = '—';
+  document.getElementById('passNote').textContent = '';
+  // Reset result row
+  document.getElementById('qResultRow').classList.remove('show');
+  // Re-enable buttons
   document.getElementById('btnAnswer').disabled = false;
   document.getElementById('btnPass').disabled = false;
   // Show phase 1 (Answer/Pass), hide phase 2 (timer+result)
   document.getElementById('qPhase1').style.display = 'block';
   document.getElementById('qPhase2').style.display = 'none';
   stopTimer();
+  // Reset timer ring visually
+  const ring = document.getElementById('timerRing');
+  const txt = document.getElementById('timerText');
+  if (ring) { ring.style.strokeDashoffset = '0'; ring.style.stroke = 'var(--accent)'; }
+  if (txt) txt.textContent = '30';
 
   passMode = false;
   passOriginalStudent = null;
@@ -1099,7 +1111,7 @@ function doPass() {
 
   const sameGroup = passRecipient.group === passOriginalStudent.group;
   document.getElementById('passNote').textContent = sameGroup
-    ? `⚠️ Same team! If wrong, BOTH teams lose ${currentQuestion.pts} pts.`
+    ? `⚠️ Same team! If correct, BOTH get +${currentQuestion.pts} pts. If wrong, team loses ${currentQuestion.pts} pts.`
     : `Different team. If wrong, ${passOriginalStudent.name} keeps their points.`;
 
   document.getElementById('qPlayerName').textContent = passRecipient.name;
@@ -1159,8 +1171,16 @@ function resolveQuestion(correct) {
 }
 
 function afterResolve() {
+  // Remove the original student from the wheel
   wheelStudents = wheelStudents.filter(s => s.name !== currentStudent.name);
+  // If question was passed, also remove the pass recipient from the wheel
+  if (passMode && passRecipient) {
+    wheelStudents = wheelStudents.filter(s => s.name !== passRecipient.name);
+  }
   currentStudent = null;
+  passMode = false;
+  passOriginalStudent = null;
+  passRecipient = null;
 
   document.getElementById('questionModal').classList.remove('show');
   document.getElementById('selectedBanner').classList.remove('show');
@@ -1270,7 +1290,7 @@ function startTimer(seconds) {
     if (remaining <= 0) {
       stopTimer();
       playSound('timeout');
-      document.getElementById('qActions').style.display = 'none';
+      // Timer ran out during phase 2 — just show result buttons (they're already visible in phase 2)
       document.getElementById('qResultRow').classList.add('show');
     }
   }
