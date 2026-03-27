@@ -653,14 +653,14 @@ function showWrongOverlay(onDismiss) {
   const snd = WRONG_SOUNDS[Math.floor(Math.random() * WRONG_SOUNDS.length)];
   document.getElementById('wrongGif').src = gif;
   document.getElementById('wrongOverlay').classList.add('show');
-  if (wrongAudio) { try { wrongAudio.stop(); } catch(e) {} wrongAudio = null; }
+  if (wrongAudio) { try { wrongAudio.pause(); wrongAudio.currentTime = 0; } catch(e) {} wrongAudio = null; }
   playWrongSound(snd);
 }
 
 function dismissWrongOverlay() {
   document.getElementById('wrongOverlay').classList.remove('show');
   document.getElementById('wrongGif').src = '';
-  if (wrongAudio) { try { wrongAudio.stop(); } catch(e) {} wrongAudio = null; }
+  if (wrongAudio) { try { wrongAudio.pause(); wrongAudio.currentTime = 0; } catch(e) {} wrongAudio = null; }
   if (pendingWrongCallback) { pendingWrongCallback(); pendingWrongCallback = null; }
 }
 
@@ -1019,6 +1019,8 @@ function selectWinner() {
 
 // ═══════════════════════════ BIG NAME OVERLAY ═══════════════════════════
 function showBigName(name, color, group) {
+  // Remove any leftover overlays from previous spins
+  document.querySelectorAll('.big-name-overlay').forEach(el => el.remove());
   const overlay = document.createElement('div');
   overlay.className = 'big-name-overlay';
   overlay.innerHTML = `
@@ -1171,12 +1173,8 @@ function resolveQuestion(correct) {
 }
 
 function afterResolve() {
-  // Remove the original student from the wheel
+  // Only remove the student who was spun (the one who chose Answer or Pass)
   wheelStudents = wheelStudents.filter(s => s.name !== currentStudent.name);
-  // If question was passed, also remove the pass recipient from the wheel
-  if (passMode && passRecipient) {
-    wheelStudents = wheelStudents.filter(s => s.name !== passRecipient.name);
-  }
   currentStudent = null;
   passMode = false;
   passOriginalStudent = null;
